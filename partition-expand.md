@@ -1,3 +1,6 @@
+Of course. Here are the commands in a Markdown code block.
+
+```bash
 # Install the necessary utility
 sudo apt update
 sudo apt install cloud-guest-utils -y
@@ -8,3 +11,4 @@ sudo growpart /dev/sda 2
 
 # Now, resize the FILESYSTEM within the partition to use the new space.
 sudo resize2fs /dev/sda2
+```
