@@ -1,4 +1,7 @@
-Of course. Here are the commands in a Markdown code block.
+```bash
+# Find your disk to expand
+lsblk
+```
 
 ```bash
 # Install the necessary utility
