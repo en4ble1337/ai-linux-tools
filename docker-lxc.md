@@ -65,3 +65,10 @@ curl -fsSL https://get.docker.com | sh && systemctl enable docker && systemctl s
 ```bash
 wget -qO- https://get.docker.com |sh
 ```
+
+## Add User to Docker Group (Optional) Only needed if running as non-root user:
+
+```bash
+usermod -aG docker $USER
+newgrp docker
+```
