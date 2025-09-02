@@ -66,7 +66,6 @@ sudo ./NVIDIA-Linux-x86_64-575.64.05.run --dkms
 - No to 32bit libraries
 - Rebuild initramfs
 - No to Nvidia X driver
-- Reboot
 
 ### Step 5: Final Reboot and Verification
 
