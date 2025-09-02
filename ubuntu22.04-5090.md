@@ -58,6 +58,41 @@ Then re-run the NVIDIA installer:
 ```bash
 sudo ./NVIDIA-Linux-x86_64-575.64.05.run --dkms
 ```
+## GUI Steps for NVIDIA Accelerated Graphics Driver for Linux-x86_64
+
+- MIT/GPL
+- Alternate method of installing the NVIDIA drivers was detected - Continue
+- Building kernel modules - Be patient
+- No to 32bit libraries
+- Rebuild initramfs
+- No to Nvidia X driver
+- Reeboot
+
+[INSTALLATION PROMPTS & RESPONSES]
+
+1. License Agreement
+   ✅ MIT/GPL
+
+2. Driver Installation Method
+   ⚠️ "Alternate method of installing the NVIDIA drivers was detected"
+   → Continue
+
+3. Kernel Module Compilation
+   ⏳ "Building kernel modules"
+   → Be patient (this may take several minutes)
+
+4. 32-bit Libraries Installation
+   ❌ No to 32bit libraries
+
+5. Initramfs Update
+   ✅ Rebuild initramfs
+
+6. NVIDIA X Server Configuration
+   ❌ No to Nvidia X driver
+
+7. Installation Complete
+   🔄 Reboot
+
 
 ### Step 5: Final Reboot and Verification
 
