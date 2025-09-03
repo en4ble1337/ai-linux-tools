@@ -36,113 +36,110 @@ You should see the new entry: `@reboot /usr/bin/nvidia-smi -pl 200`
 
 ## Persistence approach
 
-# NVIDIA GPU Power Limit Persistence Guide
+# NVIDIA RTX 5090 Power Limit Persistence Fix
 
-A simple guide to set persistent power limits on NVIDIA GPUs using nvidia-persistenced.
+This solution creates a systemd service to persistently set the NVIDIA RTX 5090 power limit to 500W on boot using persistence mode.
 
-## Overview
+## Solution: Enable Persistence Mode + Systemd Service
 
-This method uses NVIDIA's persistence daemon to maintain GPU power limit settings across reboots, eliminating the need for cron jobs or manual reapplication after system restarts.
-
-## Prerequisites
-
-- NVIDIA GPU with driver installed
-- Root/sudo access
-- `nvidia-smi` command available
-
-## Installation Steps
-
-### Step 1: Enable NVIDIA Persistence Daemon
+### Step 1: Create the power limit script
 
 ```bash
-
-# Check your NVIDIA driver version first
-nvidia-smi | head -3
-
-# Install the persistence daemon (replace XXX with your driver version if needed)
-sudo apt update
-sudo apt install nvidia-persistenced
-
-# Or try the generic package
-sudo apt install nvidia-utils-575
-
-sudo systemctl enable nvidia-persistenced
-sudo systemctl start nvidia-persistenced
-
-### Step 2: Set Power Limit with Persistence
-
-```bash
-sudo nvidia-smi -pl 200 -pm ENABLED
+sudo nano /usr/local/sbin/nv-power-limit.sh
 ```
 
-Replace `200` with your desired power limit in watts.
-
-### Step 3: Clean Up Existing Cron Jobs (Optional)
-
-If you previously used cron jobs to set power limits:
+Add this content:
 
 ```bash
-sudo crontab -r
+#!/usr/bin/env bash
+# Set power limits on NVIDIA GPU with persistence mode
+
+# Make sure nvidia-smi exists
+command -v nvidia-smi &> /dev/null || { echo >&2 "nvidia-smi not found ... exiting."; exit 1; }
+
+POWER_LIMIT=500
+
+# Enable persistence mode first
+/usr/bin/nvidia-smi --persistence-mode=1
+
+# Wait a moment for persistence mode to activate
+sleep 2
+
+# Set the power limit
+/usr/bin/nvidia-smi --power-limit=${POWER_LIMIT}
+
+exit 0
 ```
 
-**Warning**: This removes ALL cron jobs for the root user. If you have other important cron jobs, use:
+### Step 2: Make the script executable
 
 ```bash
-sudo crontab -e
+sudo chmod 755 /usr/local/sbin/nv-power-limit.sh
 ```
 
-And manually remove only the nvidia-smi lines.
+### Step 3: Create the systemd service
 
-## Verification
+```bash
+sudo nano /etc/systemd/system/nvidia-power-limit.service
+```
 
-Check that the power limit is applied:
+Add this content:
 
+```ini
+[Unit]
+Description=Set NVIDIA GPU Power Limit with Persistence
+After=multi-user.target
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/nv-power-limit.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Step 4: Enable and start the service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable nvidia-power-limit.service
+sudo systemctl start nvidia-power-limit.service
+```
+
+## Verification Commands
+
+Check service status:
+```bash
+sudo systemctl status nvidia-power-limit.service
+```
+
+Verify persistence mode:
+```bash
+nvidia-smi -q | grep "Persistence Mode"
+```
+
+Check power limit:
 ```bash
 nvidia-smi
 ```
 
-Look for the power usage line showing your set limit (e.g., `36W / 200W`).
+## How It Works
 
-Verify persistence daemon is running:
+- **Persistence Mode**: Keeps the NVIDIA driver loaded and maintains GPU settings
+- **Systemd Dependencies**: Ensures proper service ordering and dependency management  
+- **OneShot Service**: Runs once on boot and remains active to maintain the configuration
+- **Power Limit**: Sets the RTX 5090 to 500W (down from default 575W)
 
-```bash
-sudo systemctl status nvidia-persistenced
-```
+This approach is more reliable than cron jobs because it properly handles driver dependencies and ensures the NVIDIA driver is fully initialized before applying power settings.
 
-## Troubleshooting
-
-### Power limit resets after reboot
-- Check if nvidia-persistenced is enabled: `sudo systemctl is-enabled nvidia-persistenced`
-- Verify the service started successfully: `sudo systemctl status nvidia-persistenced`
-
-### Permission denied errors
-- Ensure you're using `sudo` for all commands
-- Check that your user has sudo privileges
-
-### Service not found
-- Install nvidia-utils package: `sudo apt install nvidia-utils-xxx` (replace xxx with your driver version)
-- Or install the full NVIDIA driver package
-
-## Alternative Power Limits
-
-Common power limit values:
-- Conservative: 150W-200W
-- Moderate: 250W-300W  
-- High Performance: 350W+
-
-Check your GPU's maximum power limit:
-```bash
-nvidia-smi -q -d POWER
-```
-
-## Why This Method Works
-
-Unlike temporary solutions (cron jobs, manual setting), nvidia-persistenced:
-- Automatically applies settings when the driver loads
-- Survives system reboots and driver reloads  
-- Is the officially recommended approach by NVIDIA
-- Requires no additional scripting or scheduling
-
-## License
-
-This guide is provided as-is for educational purposes.
+[1](https://github.com/systemd/systemd)
+[2](https://github.com/giobauermeister/systemd-service-template)
+[3](https://github.com/roadrunner-server/docs/blob/master/app-server/systemd.md)
+[4](https://www.reddit.com/r/bearapp/comments/aidr83/syntax_highlight_for_systemd_files/)
+[5](https://github.com/janisadhi/Dummy_Systemd_Service)
+[6](https://gist.github.com/beingadityak/ab2e46988cccc0a5e6dd289065551d8d)
+[7](https://github.com/kaxap/systemd)
+[8](https://github.com/systemd/systemd/blob/master/docs/HOME_DIRECTORY.md)
+[9](https://discourse.nixos.org/t/nix-maid-systemd-native-dotfile-management/64619)
