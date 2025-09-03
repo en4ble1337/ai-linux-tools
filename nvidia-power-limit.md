@@ -55,9 +55,19 @@ This method uses NVIDIA's persistence daemon to maintain GPU power limit setting
 ### Step 1: Enable NVIDIA Persistence Daemon
 
 ```bash
+
+# Check your NVIDIA driver version first
+nvidia-smi | head -3
+
+# Install the persistence daemon (replace XXX with your driver version if needed)
+sudo apt update
+sudo apt install nvidia-persistenced
+
+# Or try the generic package
+sudo apt install nvidia-utils-575
+
 sudo systemctl enable nvidia-persistenced
 sudo systemctl start nvidia-persistenced
-```
 
 ### Step 2: Set Power Limit with Persistence
 
