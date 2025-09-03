@@ -11,7 +11,7 @@ This guide shows how to configure your system to automatically apply a 200-watt 
 Run the following command to add the cron job without overwriting existing crontab entries:
 
 ```bash
-(sudo crontab -l 2>/dev/null; echo "@reboot /usr/bin/nvidia-smi -pl 200") | sudo crontab -
+(sudo crontab -l 2>/dev/null | grep -v "nvidia-smi"; echo "@reboot sleep 30 && /usr/bin/nvidia-smi -pl 200") | sudo crontab -
 ```
 
 ## Command Breakdown
