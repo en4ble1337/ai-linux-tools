@@ -34,15 +34,105 @@ sudo crontab -l
 
 You should see the new entry: `@reboot /usr/bin/nvidia-smi -pl 200`
 
-## Requirements
+## Persistence approach
 
-- Ubuntu 22.04
-- NVIDIA GPU with installed drivers
-- `nvidia-smi` utility available
+# NVIDIA GPU Power Limit Persistence Guide
+
+A simple guide to set persistent power limits on NVIDIA GPUs using nvidia-persistenced.
+
+## Overview
+
+This method uses NVIDIA's persistence daemon to maintain GPU power limit settings across reboots, eliminating the need for cron jobs or manual reapplication after system restarts.
+
+## Prerequisites
+
+- NVIDIA GPU with driver installed
 - Root/sudo access
+- `nvidia-smi` command available
 
-## Notes
+## Installation Steps
 
-- The power limit will be applied automatically on every system reboot
-- Using the full path `/usr/bin/nvidia-smi` ensures the command works in cron's limited environment
-- This method preserves any existing root crontab entries
+### Step 1: Enable NVIDIA Persistence Daemon
+
+```bash
+sudo systemctl enable nvidia-persistenced
+sudo systemctl start nvidia-persistenced
+```
+
+### Step 2: Set Power Limit with Persistence
+
+```bash
+sudo nvidia-smi -pl 200 -pm ENABLED
+```
+
+Replace `200` with your desired power limit in watts.
+
+### Step 3: Clean Up Existing Cron Jobs (Optional)
+
+If you previously used cron jobs to set power limits:
+
+```bash
+sudo crontab -r
+```
+
+**Warning**: This removes ALL cron jobs for the root user. If you have other important cron jobs, use:
+
+```bash
+sudo crontab -e
+```
+
+And manually remove only the nvidia-smi lines.
+
+## Verification
+
+Check that the power limit is applied:
+
+```bash
+nvidia-smi
+```
+
+Look for the power usage line showing your set limit (e.g., `36W / 200W`).
+
+Verify persistence daemon is running:
+
+```bash
+sudo systemctl status nvidia-persistenced
+```
+
+## Troubleshooting
+
+### Power limit resets after reboot
+- Check if nvidia-persistenced is enabled: `sudo systemctl is-enabled nvidia-persistenced`
+- Verify the service started successfully: `sudo systemctl status nvidia-persistenced`
+
+### Permission denied errors
+- Ensure you're using `sudo` for all commands
+- Check that your user has sudo privileges
+
+### Service not found
+- Install nvidia-utils package: `sudo apt install nvidia-utils-xxx` (replace xxx with your driver version)
+- Or install the full NVIDIA driver package
+
+## Alternative Power Limits
+
+Common power limit values:
+- Conservative: 150W-200W
+- Moderate: 250W-300W  
+- High Performance: 350W+
+
+Check your GPU's maximum power limit:
+```bash
+nvidia-smi -q -d POWER
+```
+
+## Why This Method Works
+
+Unlike temporary solutions (cron jobs, manual setting), nvidia-persistenced:
+- Automatically applies settings when the driver loads
+- Survives system reboots and driver reloads  
+- Is the officially recommended approach by NVIDIA
+- Requires no additional scripting or scheduling
+
+## License
+
+This guide is provided as-is for educational purposes.
