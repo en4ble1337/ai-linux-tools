@@ -119,7 +119,7 @@ su - node
 ### 6. Test Docker GPU Access
 
 ```bash
-docker run --rm --gpus all nvidia/cuda:12.0-base-ubuntu20.04 nvidia-smi
+sudo docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
 ```
 
 ## Verification Commands
