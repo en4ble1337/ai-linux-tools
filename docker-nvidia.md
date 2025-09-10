@@ -11,13 +11,74 @@ Complete setup guide for Docker with NVIDIA GPU support on Ubuntu/Debian systems
 
 ## Installation Steps
 
-### 1. Install Docker
+# Docker Installation Guide
 
+## Method 1: Quick Install Script
+
+### 1. Install Docker (Quick Method)
 ```bash
 curl -fsSL https://get.docker.com/ -o get-docker.sh
 sudo sh get-docker.sh
 rm get-docker.sh
 ```
+
+## Method 2: Manual Installation
+
+### 1. Update Package Index
+```bash
+sudo apt update
+```
+
+### 2. Install Prerequisites
+```bash
+sudo apt install -y ca-certificates curl gnupg lsb-release
+```
+
+### 3. Create Keyrings Directory
+```bash
+sudo mkdir -p /etc/apt/keyrings
+```
+
+### 4. Add Docker's Official GPG Key
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+```
+
+### 5. Add Docker Repository
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### 6. Update Package Index Again
+```bash
+sudo apt update
+```
+
+### 7. Install Docker Engine
+```bash
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+```
+
+### 8. Enable and Start Docker Service
+```bash
+sudo systemctl enable docker && sudo systemctl start docker
+```
+
+### 9. Verify Installation
+```bash
+sudo docker --version
+```
+
+### 10. Add User to Docker Group (Optional)
+```bash
+sudo usermod -aG docker $USER
+```
+
+> **Note:** After adding yourself to the docker group, log out and log back in for the changes to take effect.
+
 
 ### 2. Add User to Docker Group
 
