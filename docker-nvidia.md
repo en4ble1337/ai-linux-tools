@@ -189,6 +189,11 @@ sudo systemctl status docker
 sudo apt update && sudo apt install -y build-essential gcc g++ make cmake python3-dev python3-pip python3-venv libnetfilter-queue-dev libnetfilter-queue1 iptables-dev libxtables-dev pkg-config libffi-dev libssl-dev libnfnetlink-dev curl wget git software-properties-common
 ```
 
+## 22.04
+```bash
+sudo apt update && sudo apt install -y build-essential gcc g++ make cmake python3-dev python3-pip python3-venv libnetfilter-queue-dev libnetfilter-queue1 libxtables-dev libip6tc-dev libip4tc-dev pkg-config libffi-dev libssl-dev libnfnetlink-dev curl wget git software-properties-common
+```
+
 ## Additional Notes
 
 - The NVIDIA Container Toolkit requires NVIDIA drivers to be installed on the host system
