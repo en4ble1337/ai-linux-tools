@@ -1,4 +1,5 @@
-```cat << 'EOF' | bash
+```bash
+cat << 'EOF' | bash
 apt update && apt install -y openssh-server
 systemctl enable ssh
 systemctl start ssh
