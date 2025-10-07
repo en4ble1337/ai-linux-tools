@@ -67,89 +67,55 @@ Complete step-by-step guide to set up SSH key authentication for root access to 
 
 ## Step 3: Configure SSH for Root Access (Password Still Enabled)
 
-1. **First, check for additional config files that might override settings:**
-   ```bash
-   ls /etc/ssh/sshd_config.d/
-   ```
-   If any files exist (especially `*.conf` files), check their contents:
-   ```bash
-   cat /etc/ssh/sshd_config.d/*.conf
-   ```
-   Note any settings that might conflict (we'll address them below)
+**Run this single command to configure SSH properly for testing:**
 
-2. **Edit SSH configuration:**
-   ```bash
-   nano /etc/ssh/sshd_config
-   ```
+```bash
+cat << 'EOF' | bash
+# Enable PasswordAuthentication for testing
+sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
-3. **Find these lines and modify them as follows:**
+# Enable PermitRootLogin
+sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sed -i 's/^PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-   **PermitRootLogin** - Find this line:
-   ```
-   #PermitRootLogin prohibit-password
-   ```
-   Change it to (remove the #):
-   ```
-   PermitRootLogin yes
-   ```
+# Enable PubkeyAuthentication
+sed -i 's/^#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 
-   **PubkeyAuthentication** - Find this line:
-   ```
-   #PubkeyAuthentication yes
-   ```
-   Uncomment it (remove the #):
-   ```
-   PubkeyAuthentication yes
-   ```
+# Enable AuthorizedKeysFile
+sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
 
-   **PasswordAuthentication** - Find this line:
-   ```
-   PasswordAuthentication no
-   ```
-   **⚠️ CRITICAL:** Change it to `yes` for testing:
-   ```
-   PasswordAuthentication yes
-   ```
+# Ensure PermitEmptyPasswords is disabled
+sed -i 's/^#PermitEmptyPasswords no/PermitEmptyPasswords no/' /etc/ssh/sshd_config
+sed -i 's/^PermitEmptyPasswords yes/PermitEmptyPasswords no/' /etc/ssh/sshd_config
 
-   **AuthorizedKeysFile** - Find this line:
-   ```
-   #AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
-   ```
-   Uncomment it (remove the #):
-   ```
-   AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
-   ```
+# Test configuration
+sshd -t
 
-4. **Verify KbdInteractiveAuthentication:**
-   - Should already show: `KbdInteractiveAuthentication no`
-   - If not, add or change it to `no`
+# If test passes, restart SSH
+if [ $? -eq 0 ]; then
+    systemctl restart ssh
+    echo ""
+    echo "✅ SSH configured successfully for testing"
+    echo ""
+    echo "Current settings:"
+    grep -E "^PermitRootLogin|^PubkeyAuthentication|^PasswordAuthentication|^AuthorizedKeysFile" /etc/ssh/sshd_config
+else
+    echo "❌ Configuration test failed! SSH not restarted."
+    exit 1
+fi
+EOF
+```
 
-5. **Save and exit:**
-   - Press `Ctrl+X`
-   - Press `Y` to confirm
-   - Press `Enter`
+**Expected output:**
+```
+✅ SSH configured successfully for testing
 
-6. **Test configuration and restart SSH:**
-   ```bash
-   sshd -t
-   ```
-   Should show no errors
-
-   ```bash
-   systemctl restart ssh
-   ```
-
-7. **Verify the changes took effect:**
-   ```bash
-   grep -E "^PermitRootLogin|^PubkeyAuthentication|^PasswordAuthentication|^AuthorizedKeysFile" /etc/ssh/sshd_config
-   ```
-   Should show:
-   ```
-   PermitRootLogin yes
-   PubkeyAuthentication yes
-   PasswordAuthentication yes
-   AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
-   ```
+Current settings:
+PermitRootLogin yes
+PubkeyAuthentication yes
+PasswordAuthentication yes
+AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
+```
 
 ---
 
