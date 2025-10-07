@@ -67,27 +67,69 @@ Complete step-by-step guide to set up SSH key authentication for root access to 
 
 ## Step 3: Configure SSH for Root Access (Password Still Enabled)
 
-1. **Edit SSH configuration:**
+1. **First, check for additional config files that might override settings:**
+   ```bash
+   ls /etc/ssh/sshd_config.d/
+   ```
+   If any files exist (especially `*.conf` files), check their contents:
+   ```bash
+   cat /etc/ssh/sshd_config.d/*.conf
+   ```
+   Note any settings that might conflict (we'll address them below)
+
+2. **Edit SSH configuration:**
    ```bash
    nano /etc/ssh/sshd_config
    ```
 
-2. **Find and modify these lines** (remove # if commented):
+3. **Find these lines and modify them as follows:**
+
+   **PermitRootLogin** - Find this line:
+   ```
+   #PermitRootLogin prohibit-password
+   ```
+   Change it to (remove the #):
    ```
    PermitRootLogin yes
+   ```
+
+   **PubkeyAuthentication** - Find this line:
+   ```
+   #PubkeyAuthentication yes
+   ```
+   Uncomment it (remove the #):
+   ```
    PubkeyAuthentication yes
    ```
 
-3. **Important: DO NOT change PasswordAuthentication yet**
-   - Leave it as `yes` or commented out
-   - We'll disable it later after testing
+   **PasswordAuthentication** - Find this line:
+   ```
+   PasswordAuthentication no
+   ```
+   **⚠️ CRITICAL:** Change it to `yes` for testing:
+   ```
+   PasswordAuthentication yes
+   ```
 
-4. **Save and exit:**
+   **AuthorizedKeysFile** - Find this line:
+   ```
+   #AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
+   ```
+   Uncomment it (remove the #):
+   ```
+   AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
+   ```
+
+4. **Verify KbdInteractiveAuthentication:**
+   - Should already show: `KbdInteractiveAuthentication no`
+   - If not, add or change it to `no`
+
+5. **Save and exit:**
    - Press `Ctrl+X`
    - Press `Y` to confirm
    - Press `Enter`
 
-5. **Test configuration and restart SSH:**
+6. **Test configuration and restart SSH:**
    ```bash
    sshd -t
    ```
@@ -95,6 +137,18 @@ Complete step-by-step guide to set up SSH key authentication for root access to 
 
    ```bash
    systemctl restart ssh
+   ```
+
+7. **Verify the changes took effect:**
+   ```bash
+   grep -E "^PermitRootLogin|^PubkeyAuthentication|^PasswordAuthentication|^AuthorizedKeysFile" /etc/ssh/sshd_config
+   ```
+   Should show:
+   ```
+   PermitRootLogin yes
+   PubkeyAuthentication yes
+   PasswordAuthentication yes
+   AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
    ```
 
 ---
