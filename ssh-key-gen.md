@@ -1,4 +1,4 @@
-# SSH Key Authentication Setup for LXC Container (Fixed)
+# SSH Key Authentication Setup for LXC Container 
 
 Complete step-by-step guide to set up SSH key authentication for root access to an Ubuntu 22.04 LXC container using PuTTY on Windows.
 
