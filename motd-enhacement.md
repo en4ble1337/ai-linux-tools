@@ -1,5 +1,5 @@
 
-# Customizing the Ubuntu 22.04 MOTD: A Comprehensive Guide
+# Customizing the Ubuntu 22.04 MOTD: A Comprehensive Guide.
 
 This guide provides a step-by-step process for replacing the default Ubuntu 22.04 "Message of the Day" (MOTD) with a clean, custom, and highly informative login screen. The final result includes a custom welcome banner and a detailed, colorized system information panel that dynamically displays vital statistics, including optional NVIDIA GPU vitals.
 
