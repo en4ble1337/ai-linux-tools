@@ -21,7 +21,7 @@ Follow these steps to deploy the script and automate it.
 First, create the script file using a text editor like `nano`.
 
 ```bash
-nano /root/gpu_power_check.sh
+sudo nano /root/gpu_power_check.sh
 ```
 
 Copy and paste the following code into the file:
@@ -63,7 +63,7 @@ Save the file and exit the editor (press `CTRL + X`, then `Y`, then `Enter`).
 The script needs execution permissions to run.
 
 ```bash
-chmod +x /root/gpu_power_check.sh
+sudo chmod +x /root/gpu_power_check.sh
 ```
 
 ### 3\. Test the Script (Optional but Recommended)
