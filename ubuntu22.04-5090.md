@@ -64,6 +64,7 @@ sudo ./NVIDIA-Linux-x86_64-575.64.05.run --dkms
 - Alternate method of installing the NVIDIA drivers was detected - Continue
 - Building kernel modules - Be patient
 - No to 32bit libraries
+- Register kernel module sources with DKMS - YES
 - Rebuild initramfs
 - No to Nvidia X driver
 
