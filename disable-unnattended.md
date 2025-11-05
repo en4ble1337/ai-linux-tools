@@ -5,6 +5,11 @@
 sudo apt purge --auto-remove unattended-upgrades -y && sudo systemctl disable apt-daily-upgrade.timer && sudo systemctl mask apt-daily-upgrade.service && sudo systemctl disable apt-daily.timer && sudo systemctl mask apt-daily.service
 ```
 
+## Non sudo
+```bash
+apt purge --auto-remove unattended-upgrades -y && systemctl disable apt-daily-upgrade.timer && systemctl mask apt-daily-upgrade.service && systemctl disable apt-daily.timer && systemctl mask apt-daily.service
+```
+
 ## What This Does
 
 This command completely disables Ubuntu's automatic update system by:
