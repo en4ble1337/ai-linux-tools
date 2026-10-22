@@ -30,6 +30,9 @@ A collection of useful Linux tools and guides for AI development and NVIDIA GPU 
 - [Proxmox VM QEMU Guest](proxmox-vm-qemu-guest.md) - Configure QEMU guest agent for Proxmox VMs
 - [MOTD Enhancement](motd-enhacement.md) - Customize message of the day for better system information display
 
+### Desktop & Display
+- [GNOME Monitor Wake Refresh Switch](gnome-monitor-wake-refresh-switch.md) - Workaround for a USB-C/DisplayPort monitor staying black after standby at 120/144 Hz on Intel + GNOME Wayland
+
 ### Development & Best Practices
 - [FAFO Versioning 101](fafo-versioning-101.md) - Best practices for version control and software deployment strategies
 - [Vi Editor Noob 101](vi-editor-noob101.md) - Beginner's guide to using the Vi/Vim text editor
